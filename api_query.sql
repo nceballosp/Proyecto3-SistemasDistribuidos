@@ -1,0 +1,2 @@
+SELECT * FROM api
+ORDER BY count DESC;
