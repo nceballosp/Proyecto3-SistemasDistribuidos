@@ -9,7 +9,16 @@
 ## 1. Descripción de la actividad
 
 Realizaremos un proyecto de ingeniería de datos big data.
-Como fuente de datos, utilizaremos los datos provistos en línea por el Ministerio de Salud para datos Covid, el acceso se puede hacer por archivos o por APIs (explorar ambos casos). Además, se configurará una base de datos relacional real (AWS RDS), tipo MySQL o Postgres, que contendrá datos simulados/complementarios que se puedan requerir para completar el análisis de datos de Covid en Colombia. Esto nos permitirá al menos experimentar con 2 fuentes reales de datos (archivos en URLs o APIs y acceso a bases de datos).
+Como fuente de datos, utilizaremos los datos provistos en línea por el Ministerio de Salud para datos Covid, el acceso se puede hacer por archivos o por APIs. Además, se configurará una base de datos relacional real (AWS RDS), tipo MySQL o Postgres, que contendrá datos simulados/complementarios que se puedan requerir para completar el análisis de datos de Covid en Colombia. Esto nos permitirá al menos experimentar con 2 fuentes reales de datos.
+
+**Aspectos Cumplidos**
+- Captura automática de datos desde API del Ministerio de Salud.
+- Ingesta de datos desde una base de datos hacia S3.
+- Procesamiento ETL con Spark en EMR para organizar los datos y guardarlos en el S3.
+- Exposición de resultados mediante consultas en Amazon Athena y API.
+- Automatización completa de los procesos ETL.
+- Implementación de mejores prácticas para el manejo de datos en entornos distribuidos.
+
 
 ## 2. Desarrollo de objetivos
 Primero debemos crear un bucket s3 en el que podamos cargar nuestros scripts y los datos, para esto debemos crear 3 carpetas o zonas:
@@ -17,29 +26,42 @@ Primero debemos crear un bucket s3 en el que podamos cargar nuestros scripts y l
 - **trusted**
 - **scripts**
 
-luego en la carpeta scripts cargaremos los archivos de este repositorio.
-Luego de tener nuestro bucket s3 con las carpetas correctas podemos crear nuestro cluster EMR (o clonar uno existente)
+En la carpeta scripts cargaremos los archivos de este repositorio.
+
+Luego de tener nuestro bucket s3 con las carpetas correctas podemos crear nuestro cluster EMR (o clonar uno existente).
 
 En la configuracion del EMR creamos los siguientes pasos para automatizar la ingesta de los datos
 
+1. El primer paso que vamos a crear es para realizar la ingesta de los datos del Ministerio de Salud (API):
+
 <img width="1619" alt="image" src="https://github.com/user-attachments/assets/886f65f6-9f70-454d-aa7a-848a854c57d1" />
 
+2. En un nuevo paso vasmos a crear la base de datos 
+
 <img width="1627" alt="image" src="https://github.com/user-attachments/assets/7ee9f734-4d3b-4552-9071-9f59942b11ff" />
+
+3. Finalmente, creamos un paso para guardar los datos en nuestro bucket s3
 
 <img width="1607" alt="image" src="https://github.com/user-attachments/assets/0223cc05-b90c-4a9a-9f1a-3b99db10cbc7" />
 
 <img width="1428" alt="image" src="https://github.com/user-attachments/assets/5f275059-4497-4b2a-b5fa-e678f0766f9f" />
 
+
+Al crear el EMR los pasos se deberian ejecutar correctamente, como se muestra a continuacion:
+
 <img width="1811"  alt="image" src="https://github.com/user-attachments/assets/4fa74586-6f3d-43f2-a1a1-65c118c57cda" />
 
+
+Podemos ver como se cargan correctamente los datos en la zona raw del s3.
 <img width="1841" alt="image" src="https://github.com/user-attachments/assets/9c34c00f-8e5f-4fda-879b-467a36690e88" />
 
+
+Y tambien el analisis de los datos en la zona trusted
 <img width="1863"  alt="image" src="https://github.com/user-attachments/assets/d0187b88-49be-4aa4-8da2-67cc8bd1cd0f" />
 
-
-
-
 <img width="969" alt="image" src="https://github.com/user-attachments/assets/d236a90e-32e0-4596-bc53-daa3f998abf0" />
+
+
 
 En Athena podemos ejecutar las siguientes queries para crear una tabla que nos muestre nuestros resultados guardados en el archivo parquet del s3
 
